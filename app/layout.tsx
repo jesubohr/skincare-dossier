@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "@fontsource-variable/lexend"
 import "./globals.css"
+import { Providers } from "./providers"
 
 export const metadata: Metadata = {
   title: "Skincare Dossier",
@@ -13,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
