@@ -1,0 +1,11 @@
+# Ignore artifacts:
+.vscode
+.next
+node_modules
+drizzle/meta
+drizzle/*.sql
+public
+pnpm-lock.yaml
+pnpm-workspace.yaml
+.env
+*.md
