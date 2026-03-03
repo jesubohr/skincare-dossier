@@ -2,11 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { type LucideIcon, Home, Users, Calendar, Settings, ChevronsUpDown, Flower, UserRound } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { type LucideIcon, Users, Calendar, Settings, LayoutDashboard, User, HelpCircle } from "lucide-react"
 
 import {
-  useSidebar,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -15,52 +13,77 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { AppLogo } from "@/components/shared/app-logo"
+import { UserProfileButton } from "@/components/shared/user-profile-button"
 
-const navItems = [
-  { icon: Home, label: "Home", href: "/" },
-  { icon: Users, label: "Clients", href: "#" },
-  { icon: Calendar, label: "Calendar", href: "#" },
-  { icon: Settings, label: "Settings", href: "/settings" },
+const mainNav = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Clients", href: "/dashboard/clients", icon: Users },
+  { label: "Calendar", href: "/dashboard/calendar", icon: Calendar },
+  { label: "Appointments", href: "/dashboard/appointments", icon: Calendar },
+  { label: "Profile", href: "/dashboard/profile", icon: User },
+]
+
+const secondaryNav = [
+  { label: "Settings", href: "/dashboard/settings", icon: Settings },
+  { label: "Help", href: "/dashboard/help", icon: HelpCircle },
 ]
 
 export function AppSidebar() {
-  const { state } = useSidebar()
-
-  const mockUser = {
-    name: "Isabella",
-    image: "/isabella.jpg",
-  }
-
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className={cn("flex-row items-center justify-between gap-0 pt-3", state === "collapsed" && "px-2")}>
-        <div className={cn("flex items-center gap-2 transition-opacity", state === "collapsed" && "opacity-0 w-0 pointer-events-none")}>
-          <div className="bg-primary rounded-full p-2">
-            <Flower className="size-6 text-white" />
-          </div>
-          <span className="text-lg font-medium leading-none">
-            Skincare
-            <br />
-            Dossier
-          </span>
-        </div>
-        <SidebarTrigger />
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild tooltip="Home">
+              <Link href="/">
+                <AppLogo />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+
+      <SidebarContent className="overflow-hidden">
+        {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarMenu>
-            {navItems.map((item) => (
-              <NavigationItem key={item.label} icon={item.icon} label={item.label} href={item.href} />
-            ))}
-          </SidebarMenu>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {mainNav.map((item) => (
+                <NavigationItem key={item.href} icon={item.icon} label={item.label} href={item.href} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* Support navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Support</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {secondaryNav.map((item) => (
+                <NavigationItem key={item.href} icon={item.icon} label={item.label} href={item.href} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarSeparator />
+
       <SidebarFooter>
-        <UserOptions user={mockUser} isCollapsed={state === "collapsed"} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <UserProfileButton />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )
@@ -70,57 +93,13 @@ function NavigationItem({ icon: Icon, label, href }: { icon: LucideIcon; label: 
   const pathname = usePathname()
 
   return (
-    <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={pathname === href}>
+    <SidebarMenuItem key={href}>
+      <SidebarMenuButton asChild isActive={pathname === href} tooltip={label}>
         <Link href={href}>
           <Icon />
-          <span className="text-base">{label}</span>
+          <span>{label}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  )
-}
-
-interface UserOptionsProps {
-  user: {
-    name: string
-    image?: string
-  }
-  isCollapsed: boolean
-}
-
-function UserOptions({ user, isCollapsed }: UserOptionsProps) {
-  return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size="lg">
-              <div className="flex items-center gap-2">
-                <Avatar>
-                  <AvatarImage src={user?.image} alt={user.name} />
-                  <AvatarFallback className="bg-primary text-white">
-                    <UserRound />
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-base">{user.name}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" sideOffset={12} className={cn("w-56 rounded-xl", isCollapsed && "ml-4")}>
-            <DropdownMenuItem>
-              <span>Account</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <span>Billing</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <span>Sign out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
   )
 }
