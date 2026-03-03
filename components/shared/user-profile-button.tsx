@@ -7,7 +7,7 @@ import { getAvatarInitials } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { UserAvatar } from "@/components/shared/user-avatar"
 import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export function UserProfileButton() {
   const { isMobile } = useSidebar()
@@ -24,7 +24,7 @@ export function UserProfileButton() {
               {profile ? (
                 <>
                   <span className="truncate text-sm font-medium leading-none">{profile?.full_name}</span>
-                  <span className="ml-0.5 truncate text-xs text-muted-foreground">{profile?.email}</span>
+                  <span className="ml-0.5 max-w-32 truncate text-xs text-muted-foreground">{profile?.email}</span>
                 </>
               ) : (
                 <>
@@ -38,6 +38,13 @@ export function UserProfileButton() {
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="end" className="flex flex-col gap-2">
+        <DropdownMenuLabel className="flex items-center gap-2">
+          <UserAvatar variant="small" initials={initials} avatarUrl={profile?.avatar_url} />
+          <div className="flex flex-col items-start">
+            <span className="text-sm font-medium leading-none">{profile?.full_name}</span>
+            <span className="ml-0.5 text-xs text-muted-foreground">{profile?.email}</span>
+          </div>
+        </DropdownMenuLabel>
         <DropdownMenuItem>Account</DropdownMenuItem>
         <DropdownMenuItem>Billing</DropdownMenuItem>
         <DropdownMenuItem variant="destructive" aria-label="Sign out">
