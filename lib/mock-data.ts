@@ -1,5 +1,11 @@
 import { Client } from "./types"
 
+export const profile = {
+  full_name: "Jesus Bohr",
+  email: "jesus.bohr@skincare-dossier.com",
+  avatar_url: "/jesus.jpg",
+}
+
 export const clients: Client[] = [
   {
     id: "1",

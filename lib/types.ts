@@ -1,5 +1,11 @@
 export type Status = "active" | "needs-follow-up" | "payment-overdue" | "none"
 
+export interface Profile {
+  full_name: string
+  email: string
+  avatar_url: string
+}
+
 export interface Treatment {
   id: string
   name: string
