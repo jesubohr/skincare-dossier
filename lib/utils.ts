@@ -29,15 +29,13 @@ export function calculateAge(birthDate: string): number {
  * @param name The name of the client.
  * @returns The initials of the name.
  */
-export function getAvatarInitials(name: string): string {
-  const words = name.split(" ")
-  let initials = ""
-
-  for (const word of words) {
-    initials += word.charAt(0).toUpperCase()
-  }
-
-  return initials
+export function getAvatarInitials(name?: string | null): string {
+  if (!name) return ""
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
 }
 
 /**
