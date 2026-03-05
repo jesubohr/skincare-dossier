@@ -2,7 +2,7 @@
 
 import { clients, stats } from "@/lib/mock-data"
 import { StatCard } from "@/components/stat-card"
-import { ClientCard } from "@/components/client-card"
+import { ClientCard } from "@/components/clients/client-card"
 
 export default function DashboardPage() {
   return (

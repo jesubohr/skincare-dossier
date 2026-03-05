@@ -2,7 +2,7 @@
 
 import { PanelLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { useSidebar } from "@/components/ui/sidebar"
 
 export function DashboardHeader() {

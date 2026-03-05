@@ -1,10 +1,11 @@
-import { MessageCircle, ChevronRight, Eye } from "lucide-react"
 import Link from "next/link"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { ClientAvatar } from "@/components/client-avatar"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
+import { MessageCircle, ChevronRight, Eye } from "lucide-react"
 import type { Client } from "@/lib/types"
+
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { ClientAvatar } from "@/components/clients/client-avatar"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 interface ClientCardProps {
   client: Client

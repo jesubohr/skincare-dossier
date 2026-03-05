@@ -1,15 +1,16 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
+import { useState } from "react"
 import { Search, ChevronLeft, ChevronRight, MessageCircle, Eye, ChevronsLeft, ChevronsRight } from "lucide-react"
-import { getStatusText, getStatusColor, cn } from "@/lib/utils"
+
 import type { Client } from "@/lib/types"
+import { cn, getStatusText, getStatusColor } from "@/lib/utils"
 
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ClientAvatar } from "@/components/client-avatar"
+import { ClientAvatar } from "@/components/clients/client-avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 

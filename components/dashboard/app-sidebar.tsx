@@ -18,7 +18,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { AppLogo } from "@/components/shared/app-logo"
-import { UserProfileButton } from "@/components/shared/user-profile-button"
+import { UserProfileButton } from "@/components/dashboard/user-profile-button"
 
 const mainNav = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
