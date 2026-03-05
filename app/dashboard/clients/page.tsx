@@ -1,7 +1,9 @@
-import { clients } from "@/lib/mock-data"
+import { getClients } from "@/lib/actions/clients"
 import { ClientsTable } from "@/components/clients-table"
 
-export default function ClientsPage() {
+export default async function ClientsPage() {
+  const clients = await getClients()
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <div>
