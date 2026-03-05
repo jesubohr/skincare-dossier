@@ -1,10 +1,25 @@
-import { Client } from "./types"
+import { Client, Treatment, Profile, User } from "@/lib/types"
 
-export const profile = {
+export const profile: Profile = {
   full_name: "Jesus Bohr",
-  email: "jesus.bohr@skincare-dossier.com",
+  email: "jesubohr@gmail.com",
   avatar_url: "/jesus.jpg",
 }
+
+export const users: User[] = [
+  {
+    id: "1",
+    full_name: "Jesus Bohr",
+    email: "jesubohr@gmail.com",
+    avatar_url: "/jesus.jpg",
+  },
+  {
+    id: "2",
+    full_name: "Isabella Farias",
+    email: "isabella@gmail.com",
+    avatar_url: "/isabella.jpg",
+  },
+]
 
 export const clients: Client[] = [
   {
@@ -261,7 +276,7 @@ export const clients: Client[] = [
   },
 ]
 
-export const treatments = [
+export const treatments: Treatment[] = [
   {
     id: "1",
     name: "Anti-Aging Facial",

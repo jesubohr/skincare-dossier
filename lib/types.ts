@@ -6,6 +6,10 @@ export interface Profile {
   avatar_url: string
 }
 
+export interface User extends Profile {
+  id: string
+}
+
 export interface Treatment {
   id: string
   name: string
