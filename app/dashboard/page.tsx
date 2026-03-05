@@ -4,9 +4,9 @@ import { clients, stats } from "@/lib/mock-data"
 import { StatCard } from "@/components/stat-card"
 import { ClientCard } from "@/components/client-card"
 
-export default function ClientsPage() {
+export default function DashboardPage() {
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
+    <>
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">Overview of your business</p>
@@ -41,6 +41,6 @@ export default function ClientsPage() {
           <ClientCard key={client.id} client={client} />
         ))}
       </div>
-    </div>
+    </>
   )
 }
