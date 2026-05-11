@@ -27,11 +27,11 @@ export function ClientsTable({ clients }: ClientsTableProps) {
   const filteredClients = clients.filter((client) => {
     const query = searchQuery.toLowerCase()
     return (
-      client.name.toLowerCase().includes(query) ||
+      client.fullName.toLowerCase().includes(query) ||
       client.email?.toLowerCase().includes(query) ||
       client.phone.includes(query) ||
       client.skinType?.toLowerCase().includes(query) ||
-      client.lastTreatment.type.toLowerCase().includes(query)
+      client.lastTreatment?.type.toLowerCase().includes(query)
     )
   })
 
@@ -112,9 +112,9 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                 <TableRow key={client.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <ClientAvatar name={client.name} status={client.status} size="sm" />
+                      <ClientAvatar name={client.fullName} status={client.status} size="sm" />
                       <div>
-                        <div className="font-medium">{client.name}</div>
+                        <div className="font-medium">{client.fullName}</div>
                         <div className="text-sm text-muted-foreground">{client.id}</div>
                       </div>
                     </div>
@@ -130,8 +130,8 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                   <TableCell className="max-w-[200px] truncate">{client.email || "—"}</TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{client.lastTreatment.date}</div>
-                      <div className="text-sm text-muted-foreground">{client.lastTreatment.type}</div>
+                      <div className="font-medium">{client.lastTreatment?.date}</div>
+                      <div className="text-sm text-muted-foreground">{client.lastTreatment?.type}</div>
                     </div>
                   </TableCell>
                   <TableCell>

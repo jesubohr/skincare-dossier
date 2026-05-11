@@ -23,7 +23,7 @@ export default defineSchema({
       v.literal("Acne"),
       v.string(),
     ),
-  }).index("by_email", ["email"]),
+  }).index("by_userId", ["userId"]),
 
   cases: defineTable({
     clientId: v.id("clients"),

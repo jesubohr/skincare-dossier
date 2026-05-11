@@ -1,8 +1,12 @@
-import { getClients } from "@/lib/actions/clients"
+"use client"
+
+import { useQuery } from "convex/react"
+import { api } from "backend/api"
+import type { Client } from "@/lib/types"
 import { ClientsTable } from "@/components/clients/clients-table"
 
-export default async function ClientsPage() {
-  const clients = await getClients()
+export default function ClientsPage() {
+  const clients = useQuery(api.clients.getClients)
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -11,7 +15,7 @@ export default async function ClientsPage() {
         <p className="mt-1 text-sm text-muted-foreground">Manage your client records</p>
       </div>
 
-      <ClientsTable clients={clients} />
+      <ClientsTable clients={(clients ?? []) as unknown as Client[]} />
     </div>
   )
 }

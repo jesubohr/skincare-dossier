@@ -30,17 +30,12 @@ export interface TreatmentHistoryEntry {
 
 export interface Client {
   id: string
-  name: string
-  initials: string
-  avatarColor: string
-  status: "active" | "needs-follow-up" | "payment-overdue" | "none"
+  fullName: string
   phone: string
   birthDate: string
   skinType?: string
   email?: string
-  lastTreatment: {
-    date: string
-    type: string
-  }
+  status: string
+  lastTreatment?: { date: string; type: string }
   treatmentHistory?: TreatmentHistoryEntry[]
 }
