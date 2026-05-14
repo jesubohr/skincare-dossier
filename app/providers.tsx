@@ -1,34 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
 import { ThemeProvider } from "next-themes"
-import { ConvexReactClient } from "convex/react"
-import { ClerkProvider, useAuth } from "@clerk/nextjs"
-import { ConvexProviderWithClerk } from "convex/react-clerk"
-import { useUserStore } from "@/lib/store/user-store"
+import { UserProvider } from "@/components/providers/user-provider"
+import { ConvexClientProvider } from "@/components/providers/convex-client-provider"
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
-
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children, initialToken }: { children: React.ReactNode; initialToken?: string | null }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-      <ClerkProvider>
-        <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-          <UserProvider>
-            <div className="w-full min-h-screen">{children}</div>
-          </UserProvider>
-        </ConvexProviderWithClerk>
-      </ClerkProvider>
+      <ConvexClientProvider initialToken={initialToken}>
+        <UserProvider>
+          <main className="w-full min-h-screen">{children}</main>
+        </UserProvider>
+      </ConvexClientProvider>
     </ThemeProvider>
   )
-}
-
-function UserProvider({ children }: { children: React.ReactNode }) {
-  const initialize = useUserStore((state) => state.initialize)
-
-  useEffect(() => {
-    initialize()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  return <>{children}</>
 }
