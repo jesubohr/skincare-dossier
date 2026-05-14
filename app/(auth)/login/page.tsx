@@ -35,20 +35,13 @@ export default function LoginPage() {
   return (
     <div className="bg-card border border-border rounded-xl p-8">
       <div className="mb-6">
-        <h1 className="font-serif text-2xl tracking-tight text-foreground mb-1">
-          Welcome back
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Sign in to your practice dossier.
-        </p>
+        <h1 className="font-serif text-2xl tracking-tight text-foreground mb-1">Welcome back</h1>
+        <p className="text-sm text-muted-foreground">Sign in to your practice dossier.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <Label
-            htmlFor="email"
-            className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
-          >
+          <Label htmlFor="email" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Email
           </Label>
           <Input
@@ -65,10 +58,7 @@ export default function LoginPage() {
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <Label
-              htmlFor="password"
-              className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
-            >
+            <Label htmlFor="password" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
               Password
             </Label>
             <button
@@ -91,9 +81,7 @@ export default function LoginPage() {
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
+        {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button type="submit" disabled={loading} className="w-full mt-1">
           {loading ? "Signing in…" : "Sign in"}

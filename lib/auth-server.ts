@@ -5,4 +5,3 @@ export const { handler, preloadAuthQuery, isAuthenticated, getToken, fetchAuthQu
   convexSiteUrl: process.env.NEXT_PUBLIC_CONVEX_SITE_URL!,
   // basePath: "/api/auth",
 })
-

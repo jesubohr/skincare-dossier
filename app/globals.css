@@ -5,37 +5,37 @@
 
 :root {
   /* DESIGN.md palette — warm cream + deep ink + clay accent */
-  --background: #F4EFE7;
-  --foreground: #1A1714;
-  --card: #FBF8F2;
-  --card-foreground: #1A1714;
-  --popover: #FBF8F2;
-  --popover-foreground: #1A1714;
-  --primary: #1A1714;
-  --primary-foreground: #F4EFE7;
-  --secondary: #EDE6DA;
-  --secondary-foreground: #3A332C;
-  --muted: #EDE6DA;
-  --muted-foreground: #6B6358;
+  --background: #f4efe7;
+  --foreground: #1a1714;
+  --card: #fbf8f2;
+  --card-foreground: #1a1714;
+  --popover: #fbf8f2;
+  --popover-foreground: #1a1714;
+  --primary: #1a1714;
+  --primary-foreground: #f4efe7;
+  --secondary: #ede6da;
+  --secondary-foreground: #3a332c;
+  --muted: #ede6da;
+  --muted-foreground: #6b6358;
   --accent: oklch(0.92 0.025 35);
   --accent-foreground: oklch(0.34 0.06 35);
   --destructive: oklch(0.55 0.18 25);
-  --destructive-foreground: #F4EFE7;
-  --border: #D8CFBE;
-  --input: #D8CFBE;
+  --destructive-foreground: #f4efe7;
+  --border: #d8cfbe;
+  --input: #d8cfbe;
   --ring: oklch(0.62 0.08 35);
   --chart-1: oklch(0.62 0.08 35);
-  --chart-2: #968D80;
-  --chart-3: #6B6358;
-  --chart-4: #3A332C;
-  --chart-5: #1A1714;
-  --sidebar: #EDE6DA;
-  --sidebar-foreground: #1A1714;
-  --sidebar-primary: #1A1714;
-  --sidebar-primary-foreground: #F4EFE7;
+  --chart-2: #968d80;
+  --chart-3: #6b6358;
+  --chart-4: #3a332c;
+  --chart-5: #1a1714;
+  --sidebar: #ede6da;
+  --sidebar-foreground: #1a1714;
+  --sidebar-primary: #1a1714;
+  --sidebar-primary-foreground: #f4efe7;
   --sidebar-accent: oklch(0.92 0.025 35);
   --sidebar-accent-foreground: oklch(0.34 0.06 35);
-  --sidebar-border: #D8CFBE;
+  --sidebar-border: #d8cfbe;
   --sidebar-ring: oklch(0.62 0.08 35);
   --font-sans: Lexend Variable, sans-serif;
   --font-serif: "Instrument Serif", "Times New Roman", serif;
@@ -61,37 +61,37 @@
 
 .dark {
   /* Inverted — ink background, cream text */
-  --background: #1A1714;
-  --foreground: #F4EFE7;
-  --card: #2A2420;
-  --card-foreground: #F4EFE7;
-  --popover: #2A2420;
-  --popover-foreground: #F4EFE7;
-  --primary: #F4EFE7;
-  --primary-foreground: #1A1714;
-  --secondary: #2E2926;
-  --secondary-foreground: #EDE6DA;
-  --muted: #2E2926;
-  --muted-foreground: #968D80;
+  --background: #1a1714;
+  --foreground: #f4efe7;
+  --card: #2a2420;
+  --card-foreground: #f4efe7;
+  --popover: #2a2420;
+  --popover-foreground: #f4efe7;
+  --primary: #f4efe7;
+  --primary-foreground: #1a1714;
+  --secondary: #2e2926;
+  --secondary-foreground: #ede6da;
+  --muted: #2e2926;
+  --muted-foreground: #968d80;
   --accent: oklch(0.38 0.05 35);
   --accent-foreground: oklch(0.92 0.025 35);
   --destructive: oklch(0.65 0.18 25);
-  --destructive-foreground: #F4EFE7;
-  --border: #3A332C;
-  --input: #3A332C;
+  --destructive-foreground: #f4efe7;
+  --border: #3a332c;
+  --input: #3a332c;
   --ring: oklch(0.62 0.08 35);
   --chart-1: oklch(0.62 0.08 35);
-  --chart-2: #968D80;
-  --chart-3: #6B6358;
-  --chart-4: #EDE6DA;
-  --chart-5: #F4EFE7;
-  --sidebar: #2E2926;
-  --sidebar-foreground: #F4EFE7;
-  --sidebar-primary: #F4EFE7;
-  --sidebar-primary-foreground: #1A1714;
+  --chart-2: #968d80;
+  --chart-3: #6b6358;
+  --chart-4: #ede6da;
+  --chart-5: #f4efe7;
+  --sidebar: #2e2926;
+  --sidebar-foreground: #f4efe7;
+  --sidebar-primary: #f4efe7;
+  --sidebar-primary-foreground: #1a1714;
   --sidebar-accent: oklch(0.38 0.05 35);
   --sidebar-accent-foreground: oklch(0.92 0.025 35);
-  --sidebar-border: #3A332C;
+  --sidebar-border: #3a332c;
   --sidebar-ring: oklch(0.62 0.08 35);
 }
 
@@ -190,15 +190,15 @@
 /* ============ LANDING PAGE ============ */
 
 @theme {
-  --color-lp-bg: #F4EFE7;
-  --color-lp-bg-soft: #EDE6DA;
-  --color-lp-bg-card: #FBF8F2;
-  --color-lp-ink: #1A1714;
-  --color-lp-ink-2: #3A332C;
-  --color-lp-ink-3: #6B6358;
-  --color-lp-ink-4: #968D80;
-  --color-lp-rule: #D8CFBE;
-  --color-lp-rule-soft: #E5DDCC;
+  --color-lp-bg: #f4efe7;
+  --color-lp-bg-soft: #ede6da;
+  --color-lp-bg-card: #fbf8f2;
+  --color-lp-ink: #1a1714;
+  --color-lp-ink-2: #3a332c;
+  --color-lp-ink-3: #6b6358;
+  --color-lp-ink-4: #968d80;
+  --color-lp-rule: #d8cfbe;
+  --color-lp-rule-soft: #e5ddcc;
   --color-lp-accent: oklch(0.62 0.08 35);
   --color-lp-accent-ink: oklch(0.34 0.06 35);
   --color-lp-accent-soft: oklch(0.92 0.025 35);
@@ -577,7 +577,9 @@
 .lp-faq-answer {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
+  transition:
+    max-height 0.3s ease,
+    padding 0.3s ease;
 }
 
 .lp-faq-open .lp-faq-answer {

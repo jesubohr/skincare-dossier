@@ -49,20 +49,13 @@ export default function RegisterPage() {
   return (
     <div className="bg-card border border-border rounded-xl p-8">
       <div className="mb-6">
-        <h1 className="font-serif text-2xl tracking-tight text-foreground mb-1">
-          Create your account
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Set up your practice dossier in seconds.
-        </p>
+        <h1 className="font-serif text-2xl tracking-tight text-foreground mb-1">Create your account</h1>
+        <p className="text-sm text-muted-foreground">Set up your practice dossier in seconds.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <Label
-            htmlFor="name"
-            className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
-          >
+          <Label htmlFor="name" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Full name
           </Label>
           <Input
@@ -78,10 +71,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label
-            htmlFor="email"
-            className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
-          >
+          <Label htmlFor="email" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Email
           </Label>
           <Input
@@ -98,10 +88,7 @@ export default function RegisterPage() {
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <Label
-              htmlFor="password"
-              className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
-            >
+            <Label htmlFor="password" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
               Password
             </Label>
             <button
@@ -125,10 +112,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label
-            htmlFor="confirm"
-            className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
-          >
+          <Label htmlFor="confirm" className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Confirm password
           </Label>
           <Input
@@ -143,9 +127,7 @@ export default function RegisterPage() {
           />
         </div>
 
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
+        {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button type="submit" disabled={loading} className="w-full mt-1">
           {loading ? "Creating account…" : "Create account"}
