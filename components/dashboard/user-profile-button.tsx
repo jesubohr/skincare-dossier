@@ -12,18 +12,19 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem,
 export function UserProfileButton() {
   const { isMobile } = useSidebar()
   const profile = useUserStore((state) => state.profile)
-  const initials = getAvatarInitials(profile?.full_name || "User")
+  const displayName = profile?.displayName ?? profile?.fullName
+  const initials = getAvatarInitials(displayName || "User")
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 w-full" asChild>
-        <SidebarMenuButton size="lg" tooltip={profile?.full_name ?? "Profile"}>
+        <SidebarMenuButton size="lg" tooltip={displayName ?? "Profile"}>
           <div className="grow flex items-center gap-2">
-            <UserAvatar variant="small" initials={initials} avatarUrl={profile?.avatar_url} />
+            <UserAvatar variant="small" initials={initials} avatarUrl={profile?.avatarUrl} />
             <div className="flex flex-col items-start min-w-0">
               {profile ? (
                 <>
-                  <span className="truncate text-sm font-medium leading-none">{profile?.full_name}</span>
+                  <span className="truncate text-sm font-medium leading-none">{displayName}</span>
                   <span className="ml-0.5 max-w-32 truncate text-xs text-muted-foreground">{profile?.email}</span>
                 </>
               ) : (
@@ -39,9 +40,9 @@ export function UserProfileButton() {
       </DropdownMenuTrigger>
       <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="end" className="flex flex-col gap-2">
         <DropdownMenuLabel className="flex items-center gap-2">
-          <UserAvatar variant="small" initials={initials} avatarUrl={profile?.avatar_url} />
+          <UserAvatar variant="small" initials={initials} avatarUrl={profile?.avatarUrl} />
           <div className="flex flex-col items-start">
-            <span className="text-sm font-medium leading-none">{profile?.full_name}</span>
+            <span className="text-sm font-medium leading-none">{displayName}</span>
             <span className="ml-0.5 text-xs text-muted-foreground">{profile?.email}</span>
           </div>
         </DropdownMenuLabel>

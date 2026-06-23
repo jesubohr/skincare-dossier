@@ -1,11 +1,11 @@
 import { create } from "zustand"
 import type { Profile } from "@/lib/types"
-import { profile } from "@/lib/mock-data"
 
 interface UserState {
   profile: Profile | null
   isLoading: boolean
   isAuthenticated: boolean
+  setProfile: (profile: Profile | null) => void
   initialize: () => Promise<void>
   fetchProfile: () => Promise<void>
   signOut: () => Promise<void>
@@ -16,6 +16,10 @@ export const useUserStore = create<UserState>((set, get) => ({
   isLoading: false,
   isAuthenticated: false,
 
+  setProfile: (profile) => {
+    set({ profile, isAuthenticated: !!profile })
+  },
+
   initialize: async () => {
     set({ isLoading: true })
     await get().fetchProfile()
@@ -23,8 +27,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   fetchProfile: async () => {
-    const userProfile = profile
-    set({ profile: userProfile, isAuthenticated: !!userProfile })
+    set({ isAuthenticated: !!get().profile })
   },
 
   signOut: async () => {

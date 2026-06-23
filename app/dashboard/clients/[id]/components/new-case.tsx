@@ -43,7 +43,7 @@ export default function AddNewCase({ clientId, treatments }: AddNewCaseProps) {
               doctor: data.doctor,
               type: data.type,
               observations: data.observations,
-              recommendations: data.recommendations,
+              recommendations: data.recommendations ?? [],
               nextVisit: data.nextVisit,
             })
             setOpen(false)

@@ -1,13 +1,13 @@
 "use client"
 
-import { use, useMemo } from "react"
+import { use } from "react"
 import { notFound } from "next/navigation"
 import { ArrowRight, Calendar, Eye, Flower2, Mail, Phone, BriefcaseMedical } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ClientAvatar } from "@/components/client-avatar"
+import { ClientAvatar } from "@/components/clients/client-avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 
 import AddNewCase from "./components/new-case"
@@ -15,6 +15,8 @@ import EditClient from "./components/edit-client"
 import { useClient } from "@/lib/hooks/use-clients"
 import { useTreatments } from "@/lib/hooks/use-treatments"
 import { cn, calculateAge } from "@/lib/utils"
+import type { Client } from "@/lib/types"
+import type { Id } from "@/convex/_generated/dataModel"
 
 interface ClientProfilePageProps {
   params: Promise<{
@@ -24,7 +26,8 @@ interface ClientProfilePageProps {
 
 export default function ClientProfilePage({ params }: ClientProfilePageProps) {
   const { id } = use(params)
-  const { client, isLoading } = useClient(id as any)
+  const clientId = id as Id<"clients">
+  const { client, isLoading } = useClient(clientId)
   const { treatments } = useTreatments()
 
   if (isLoading) {
@@ -53,7 +56,7 @@ export default function ClientProfilePage({ params }: ClientProfilePageProps) {
               <h2 className="text-2xl font-bold tracking-tight text-foreground">Treatment History</h2>
               <p className="text-muted-foreground">Timeline of visits and procedures</p>
             </div>
-            <AddNewCase clientId={id as any} treatments={treatments ?? []} />
+            <AddNewCase clientId={clientId} treatments={treatments ?? []} />
           </div>
 
           <div className="relative space-y-8 pl-4">
@@ -136,16 +139,16 @@ export default function ClientProfilePage({ params }: ClientProfilePageProps) {
   )
 }
 
-function ClientProfileCard({ client }: { client: any }) {
+function ClientProfileCard({ client }: { client: Client }) {
   return (
     <Card className="overflow-hidden border-none shadow-sm">
       <CardContent className="flex items-start justify-between py-4 px-8">
         <div className="flex gap-6">
-          <ClientAvatar name={client.name} status={client.status} size="lg" />
+          <ClientAvatar name={client.fullName} status={client.status} size="lg" />
 
           <div className="space-y-2 pt-1">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">{client.name}</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">{client.fullName}</h1>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

@@ -21,9 +21,11 @@ export function UserAvatar({ initials, avatarUrl, variant = "default", children 
 
   return (
     <Avatar className={cn("group border-card", choosedVariant)}>
-      <AvatarImage src={avatarUrl ?? undefined} asChild>
-        <Image width={100} height={100} src={avatarUrl!} alt={`Profile image of ${initials}`} />
-      </AvatarImage>
+      {avatarUrl ? (
+        <AvatarImage src={avatarUrl} asChild>
+          <Image width={100} height={100} src={avatarUrl} alt={`Profile image of ${initials}`} />
+        </AvatarImage>
+      ) : null}
       <AvatarFallback className="bg-primary/20 text-xl font-semibold text-primary">{initials}</AvatarFallback>
       {children}
     </Avatar>

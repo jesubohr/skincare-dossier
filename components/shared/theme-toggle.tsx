@@ -6,21 +6,24 @@ import { Button } from "@/components/ui/button"
 
 const iconStyles = "group-hover:text-primary transition-colors"
 
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (callback: () => Promise<void> | void) => void
+}
+
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
 
   function toggleTheme() {
+    const viewTransitionDocument = document as ViewTransitionDocument
     const isAppearanceTransition =
-      // @ts-expect-error - document.startViewTransition is not yet in the official TS types
-      document.startViewTransition !== undefined && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      viewTransitionDocument.startViewTransition !== undefined && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     if (!isAppearanceTransition) {
       setTheme(resolvedTheme === "dark" ? "light" : "dark")
       return
     }
 
-    // @ts-expect-error - document.startViewTransition is not yet in the official TS types
-    document.startViewTransition(async () => {
+    viewTransitionDocument.startViewTransition?.(async () => {
       setTheme(resolvedTheme === "dark" ? "light" : "dark")
     })
   }

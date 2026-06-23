@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useClients } from "@/lib/hooks/use-clients"
 import { formatPhoneDinamically } from "@/lib/utils"
+import type { Id } from "@/convex/_generated/dataModel"
 
 interface EditClientProps {
   client: {
     id: string
-    name: string
+    fullName: string
     email?: string
     phone: string
     birthDate: string
@@ -42,8 +43,8 @@ export default function EditClient({ client }: EditClientProps) {
           client={client}
           onSubmit={async (data) => {
             await updateClient({
-              id: client.id as any,
-              name: data.name,
+              id: client.id as Id<"clients">,
+              fullName: data.fullName,
               email: data.email,
               phone: data.phone,
               birthDate: data.birthDate,
@@ -75,38 +76,31 @@ export default function EditClient({ client }: EditClientProps) {
 
 interface EditClientFormProps {
   client: EditClientProps["client"]
-  onSubmit: (data: { name: string; email?: string; phone: string; birthDate: string; skinType?: string }) => void
+  onSubmit: (data: { fullName: string; email?: string; phone: string; birthDate: string; skinType?: string }) => void
 }
 
 function EditClientForm({ client, onSubmit }: EditClientFormProps) {
   const [skinType, setSkinType] = useState(client.skinType)
   const [phone, setPhone] = useState(formatPhoneDinamically(client.phone))
-  const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setIsLoading(true)
-
-    try {
-      const formData = new FormData(e.currentTarget)
-      await onSubmit({
-        name: formData.get("name") as string,
-        email: (formData.get("email") as string) || undefined,
-        phone: formData.get("phone") as string,
-        birthDate: formData.get("birthDate") as string,
-        skinType: (formData.get("skinType") as string) || undefined,
-      })
-    } finally {
-      setIsLoading(false)
-    }
+    const formData = new FormData(e.currentTarget)
+    await onSubmit({
+      fullName: formData.get("fullName") as string,
+      email: (formData.get("email") as string) || undefined,
+      phone: formData.get("phone") as string,
+      birthDate: formData.get("birthDate") as string,
+      skinType: (formData.get("skinType") as string) || undefined,
+    })
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-2 px-6">
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" name="name" defaultValue={client.name} placeholder="Client Name" required />
+          <Label htmlFor="fullName">Name</Label>
+          <Input id="fullName" name="fullName" defaultValue={client.fullName} placeholder="Client Name" required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>

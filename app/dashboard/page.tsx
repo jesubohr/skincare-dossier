@@ -1,106 +1,130 @@
 "use client"
 
 import Link from "next/link"
+import { useMemo } from "react"
+import { useQuery } from "convex/react"
 import { ArrowRight, CalendarDays, Clock, Plus } from "lucide-react"
 
+import { api } from "@/convex/_generated/api"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { clients } from "@/lib/mock-data"
+import type { Appointment, Client } from "@/lib/types"
 
-type DashboardClient = {
-  id: string
-  name?: string
-  fullName?: string
-  status: string
-  lastTreatment?: {
-    type: string
-  }
+type DashboardSummary = {
+  user: { fullName: string; displayName?: string }
+  todaysAppointments: Appointment[]
+  pendingFollowUps: Client[]
+  confirmedAppointments: number
+  bookedMinutes: number
+  capacityMinutes: number
+  utilization: number
+  nextAppointment?: Appointment
+  clientCount: number
 }
 
-const todaysAppointments = [
-  {
-    id: "appt-1",
-    time: "10:00",
-    duration: "60 min",
-    client: "Sarah Jenkins",
-    treatment: "Anti-Aging Facial",
-    status: "Confirmed",
-  },
-  {
-    id: "appt-2",
-    time: "14:30",
-    duration: "45 min",
-    client: "Monica Ross",
-    treatment: "HydraFacial",
-    status: "Pending",
-  },
-  {
-    id: "appt-3",
-    time: "16:00",
-    duration: "60 min",
-    client: "James Wilson",
-    treatment: "Botox Touch-up",
-    status: "Confirmed",
-  },
-]
+function todayKey() {
+  return new Date().toISOString().slice(0, 10)
+}
 
-const dashboardClients = clients as unknown as DashboardClient[]
-const pendingFollowUps = dashboardClients.filter((client) => client.status === "needs-follow-up")
-const confirmedAppointments = todaysAppointments.filter((appointment) => appointment.status === "Confirmed").length
-const totalBookedMinutes = todaysAppointments.reduce((total, appointment) => total + Number.parseInt(appointment.duration, 10), 0)
-const dailyCapacityMinutes = 480
-const utilization = Math.round((totalBookedMinutes / dailyCapacityMinutes) * 100)
+function formatDayLabel(day: string) {
+  return new Date(`${day}T12:00:00`).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  })
+}
+
+function formatTime(value: string) {
+  return new Date(value).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+}
+
+function statusLabel(status: Appointment["status"]) {
+  return status
+    .split("_")
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join(" ")
+}
 
 export default function DashboardPage() {
-  const nextAppointment = todaysAppointments[0]
+  const day = useMemo(() => todayKey(), [])
+  const summary = useQuery(api.dashboard.getSummary, { day }) as DashboardSummary | undefined
+
+  if (!summary) {
+    return <DashboardSkeleton />
+  }
+
+  const practitionerName = summary.user.displayName ?? summary.user.fullName
+  const firstName = practitionerName.split(" ")[0] ?? "there"
 
   return (
     <div className="space-y-8">
       <section className="space-y-7">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Overview of your business</p>
+          <p className="mt-1 text-sm text-muted-foreground">Your day at a glance</p>
         </div>
 
         <div className="space-y-2">
-          <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">Tuesday, June 23</p>
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">{formatDayLabel(day)}</p>
           <div className="space-y-1">
             <h2 className="font-serif text-4xl leading-none tracking-tight text-foreground md:text-5xl">
-              Good morning, <span className="italic text-accent-foreground">Jesus.</span>
+              Good morning, <span className="italic text-accent-foreground">{firstName}.</span>
             </h2>
             <p className="text-sm text-muted-foreground">
-              You have {todaysAppointments.length} appointments today. Next: {nextAppointment.time} with {nextAppointment.client}.
+              {summary.todaysAppointments.length === 0
+                ? "No appointments are scheduled today."
+                : `You have ${summary.todaysAppointments.length} appointments today. Next: ${
+                    summary.nextAppointment ? `${formatTime(summary.nextAppointment.startsAt)} with ${summary.nextAppointment.clientName}` : "none remaining"
+                  }.`}
             </p>
           </div>
         </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,0.9fr)]">
-        <TodaySchedule appointments={todaysAppointments} />
+        <TodaySchedule appointments={summary.todaysAppointments} confirmedAppointments={summary.confirmedAppointments} />
 
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <MetricTile
               label="Appointments Today"
-              value={String(todaysAppointments.length)}
-              detail={`${confirmedAppointments} confirmed - ${todaysAppointments.length - confirmedAppointments} pending`}
+              value={String(summary.todaysAppointments.length)}
+              detail={`${summary.confirmedAppointments} confirmed - ${summary.todaysAppointments.length - summary.confirmedAppointments} pending`}
               tone="soft"
             />
-            <MetricTile label="Pending Follow-ups" value={String(pendingFollowUps.length)} detail="Clients waiting for outreach" />
+            <MetricTile label="Pending Follow-ups" value={String(summary.pendingFollowUps.length)} detail="Clients waiting for outreach" />
           </div>
 
-          <UtilizationCard utilization={utilization} bookedMinutes={totalBookedMinutes} capacityMinutes={dailyCapacityMinutes} />
-          <FollowUpQueue />
+          <UtilizationCard utilization={summary.utilization} bookedMinutes={summary.bookedMinutes} capacityMinutes={summary.capacityMinutes} />
+          <FollowUpQueue clients={summary.pendingFollowUps} />
         </div>
       </section>
     </div>
   )
 }
 
-function TodaySchedule({ appointments }: { appointments: typeof todaysAppointments }) {
+function DashboardSkeleton() {
   return (
-    <Card className="min-h-[540px] gap-0 py-0 shadow-none">
+    <div className="space-y-8">
+      <div className="h-28 rounded-xl border bg-card" />
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,0.9fr)]">
+        <div className="h-135 rounded-xl border bg-card" />
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="h-36 rounded-xl border bg-card" />
+            <div className="h-36 rounded-xl border bg-card" />
+          </div>
+          <div className="h-48 rounded-xl border bg-card" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TodaySchedule({ appointments, confirmedAppointments }: { appointments: Appointment[]; confirmedAppointments: number }) {
+  return (
+    <Card className="min-h-135 gap-0 py-0 shadow-none">
       <CardContent className="flex h-full flex-col px-5 py-5 md:px-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -118,25 +142,29 @@ function TodaySchedule({ appointments }: { appointments: typeof todaysAppointmen
         </div>
 
         <div className="mt-8 space-y-4">
-          {appointments.map((appointment) => (
-            <div key={appointment.id} className="grid gap-3 sm:grid-cols-[64px_minmax(0,1fr)]">
-              <div className="font-mono tabular-nums text-sm text-muted-foreground">
-                <p className="text-foreground">{appointment.time}</p>
-                <p className="mt-1 text-xs">{appointment.duration}</p>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-secondary/45 p-4">
-                <div className="border-l border-primary pl-4">
-                  <p className="font-medium text-foreground">{appointment.client}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{appointment.treatment}</p>
+          {appointments.length === 0 ? (
+            <div className="rounded-lg border border-dashed bg-secondary/35 p-6 text-sm text-muted-foreground">No appointments booked for today.</div>
+          ) : (
+            appointments.map((appointment) => (
+              <div key={appointment.id} className="grid gap-3 sm:grid-cols-[64px_minmax(0,1fr)]">
+                <div className="font-mono tabular-nums text-sm text-muted-foreground">
+                  <p className="text-foreground">{formatTime(appointment.startsAt)}</p>
+                  <p className="mt-1 text-xs">{appointment.durationMinutes} min</p>
                 </div>
-                <Badge variant={appointment.status === "Confirmed" ? "secondary" : "outline"} className="gap-1.5">
-                  <span className="size-1.5 rounded-full bg-primary" />
-                  {appointment.status}
-                </Badge>
+
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-secondary/45 p-4">
+                  <div className="border-l border-primary pl-4">
+                    <p className="font-medium text-foreground">{appointment.clientName}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{appointment.treatmentName}</p>
+                  </div>
+                  <Badge variant={appointment.status === "confirmed" ? "secondary" : "outline"} className="gap-1.5">
+                    <span className="size-1.5 rounded-full bg-primary" />
+                    {statusLabel(appointment.status)}
+                  </Badge>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         <Button variant="secondary" className="mt-auto h-12 justify-start border border-dashed border-border bg-accent text-accent-foreground hover:bg-accent/80" asChild>
@@ -175,7 +203,7 @@ function UtilizationCard({ utilization, bookedMinutes, capacityMinutes }: { util
         <div className="mt-5 flex items-center gap-6">
           <div
             className="grid size-20 place-items-center rounded-full"
-            style={{ background: `conic-gradient(var(--foreground) ${utilization * 3.6}deg, var(--muted) 0deg)` }}
+            style={{ background: `conic-gradient(var(--foreground) ${Math.min(utilization, 100) * 3.6}deg, var(--muted) 0deg)` }}
             aria-hidden="true"
           >
             <div className="size-14 rounded-full bg-card" />
@@ -184,47 +212,46 @@ function UtilizationCard({ utilization, bookedMinutes, capacityMinutes }: { util
           <div>
             <p className="font-serif text-5xl leading-none tabular-nums tracking-tight text-foreground">{utilization}%</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              {bookedMinutes} min of {capacityMinutes / 60}h
+              {bookedMinutes} min of {Math.round(capacityMinutes / 60)}h
             </p>
           </div>
-        </div>
-
-        <div className="mt-5 flex flex-wrap gap-2">
-          <span className="rounded-full bg-secondary px-3 py-1 font-mono text-xs text-muted-foreground">09:00-13:00</span>
-          <span className="rounded-full bg-secondary px-3 py-1 font-mono text-xs text-muted-foreground">14:00-18:00</span>
         </div>
       </CardContent>
     </Card>
   )
 }
 
-function FollowUpQueue() {
+function FollowUpQueue({ clients }: { clients: Client[] }) {
   return (
     <Card className="gap-0 py-0 shadow-none">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">Follow-up Queue</p>
-            <h3 className="mt-2 text-base font-semibold text-foreground">{pendingFollowUps.length} clients pending</h3>
+            <h3 className="mt-2 text-base font-semibold text-foreground">{clients.length} clients pending</h3>
           </div>
           <Clock className="size-4 text-muted-foreground" aria-hidden="true" />
         </div>
 
         <div className="mt-5 space-y-3">
-          {pendingFollowUps.map((client) => (
-            <div key={client.id} className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3">
-              <div className="min-w-0">
-                <p className="truncate font-medium text-foreground">{client.name ?? client.fullName}</p>
-                <p className="mt-1 truncate text-sm text-muted-foreground">{client.lastTreatment?.type ?? "Follow-up needed"}</p>
+          {clients.length === 0 ? (
+            <p className="rounded-lg border border-dashed bg-secondary/35 p-4 text-sm text-muted-foreground">No follow-ups waiting.</p>
+          ) : (
+            clients.map((client) => (
+              <div key={client.id} className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3">
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">{client.fullName}</p>
+                  <p className="mt-1 truncate text-sm text-muted-foreground">{client.lastTreatment?.type ?? "Follow-up needed"}</p>
+                </div>
+                <Button variant="ghost" size="sm" className="shrink-0 text-primary" asChild>
+                  <Link href={`/dashboard/clients/${client.id}`}>
+                    View
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                </Button>
               </div>
-              <Button variant="ghost" size="sm" className="shrink-0 text-primary" asChild>
-                <Link href={`/dashboard/clients/${client.id}`}>
-                  View
-                  <ArrowRight className="size-3.5" />
-                </Link>
-              </Button>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         <Button variant="outline" className="mt-5 w-full" asChild>

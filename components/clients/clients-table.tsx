@@ -142,7 +142,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                         </Link>
                       </Button>
                       <Button variant="ghost" size="icon-sm" asChild>
-                        <Link href={`/clients/${client.id}`}>
+                        <Link href={`/dashboard/clients/${client.id}`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>

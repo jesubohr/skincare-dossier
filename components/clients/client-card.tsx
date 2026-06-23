@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { MessageCircle, ChevronRight, Eye } from "lucide-react"
-import type { Client } from "@/lib/types"
+import type { Client, ClientStatus } from "@/lib/types"
 
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -12,7 +12,7 @@ interface ClientCardProps {
 }
 
 export function ClientCard({ client }: ClientCardProps) {
-  const statusTextColor = {
+  const statusTextColor: Record<ClientStatus, string> = {
     active: "text-muted-foreground/80 italic",
     "needs-follow-up": "text-primary",
     "payment-overdue": "text-rose-500",
@@ -22,13 +22,13 @@ export function ClientCard({ client }: ClientCardProps) {
   return (
     <Card>
       <CardHeader className="flex gap-6">
-        <ClientAvatar name={client.name} status={client.status} size="sm" />
+        <ClientAvatar name={client.fullName} status={client.status} size="sm" />
         <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-semibold text-foreground">{client.name}</h3>
+          <h3 className="text-lg font-semibold text-foreground">{client.fullName}</h3>
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Last Treatment</p>
-            <p className="text-foreground/90 font-medium">{client.lastTreatment.date}</p>
-            <p className={`text-sm ${statusTextColor[client.status]}`}>{client.lastTreatment.type}</p>
+            <p className="text-foreground/90 font-medium">{client.lastTreatment?.date ?? "No visits yet"}</p>
+            <p className={`text-sm ${statusTextColor[client.status]}`}>{client.lastTreatment?.type ?? "Treatment history pending"}</p>
           </div>
         </div>
       </CardHeader>
@@ -44,7 +44,7 @@ export function ClientCard({ client }: ClientCardProps) {
             </Link>
           </Button>
           <Button variant="ghost" size="sm" className="text-primary" asChild>
-            <Link href={`/clients/${client.id}`}>
+            <Link href={`/dashboard/clients/${client.id}`}>
               <Eye />
               View
               <ChevronRight />
