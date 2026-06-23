@@ -39,10 +39,8 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild tooltip="Home">
-              <Link href="/">
-                <AppLogo />
-              </Link>
+            <SidebarMenuButton size="lg">
+              <AppLogo />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

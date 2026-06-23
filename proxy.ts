@@ -15,12 +15,17 @@ export function proxy(request: NextRequest) {
 
   // BetterAuth session cookie
   const session = request.cookies.get("better-auth.session_token")
-  if (!session) {
-    return NextResponse.redirect(new URL("/login", request.url))
-  }
 
   if (isAuth) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+    if (session) {
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+
+    return NextResponse.next()
+  }
+
+  if (!session) {
+    return NextResponse.redirect(new URL("/login", request.url))
   }
 
   return NextResponse.next()
