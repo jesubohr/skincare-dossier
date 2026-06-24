@@ -12,12 +12,7 @@ const skinType = v.union(
   v.string(),
 )
 
-const clientStatus = v.union(
-  v.literal("active"),
-  v.literal("needs-follow-up"),
-  v.literal("payment-overdue"),
-  v.literal("none"),
-)
+const clientStatus = v.union(v.literal("active"), v.literal("needs-follow-up"), v.literal("payment-overdue"), v.literal("none"))
 
 const appointmentStatus = v.union(
   v.literal("pending"),
@@ -67,6 +62,7 @@ export default defineSchema({
     description: v.optional(v.string()),
     priceCents: v.optional(v.number()),
     durationMinutes: v.number(),
+    archivedAt: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })

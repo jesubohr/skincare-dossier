@@ -8,6 +8,8 @@ export function useTreatments() {
   const treatments = useQuery(api.treatments.getTreatments) as Treatment[] | undefined
   const createTreatment = useMutation(api.treatments.createTreatment)
   const updateTreatment = useMutation(api.treatments.updateTreatment)
+  const archiveTreatment = useMutation(api.treatments.archiveTreatment)
+  const seedTreatmentCatalog = useMutation(api.treatments.seedTreatmentCatalog)
 
   return {
     treatments: treatments?.map((treatment) => ({
@@ -18,5 +20,7 @@ export function useTreatments() {
     isLoading: treatments === undefined,
     createTreatment,
     updateTreatment,
+    archiveTreatment,
+    seedTreatmentCatalog,
   }
 }
