@@ -46,12 +46,26 @@ function formatTime(value: string) {
   return new Date(value).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
 }
 
+function rangeLabel(startIso: string, endIso: string) {
+  const fmt = (date: Date) => date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  const start = new Date(startIso)
+  const end = new Date(endIso)
+  return `${fmt(start)} – ${fmt(end)}, ${end.getFullYear()}`
+}
+
+function byStart(a: { startsAt: string }, b: { startsAt: string }) {
+  return a.startsAt.localeCompare(b.startsAt)
+}
+
 export default function CalendarPage() {
   const range = useMemo(() => weekRange(), [])
   const days = useMemo(() => daysForRange(range.start), [range.start])
   const { appointments } = useAppointments(range)
   const { blocks, createAvailabilityBlock, deleteAvailabilityBlock } = useAvailabilityBlocks(range)
   const [saving, setSaving] = useState(false)
+
+  const loading = appointments === undefined || blocks === undefined
+  const todayKey = dayKey(new Date())
 
   async function handleBlockSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -66,7 +80,7 @@ export default function CalendarPage() {
         endsAt: new Date(String(formData.get("endsAt"))).toISOString(),
         notes: String(formData.get("notes") ?? "") || undefined,
       })
-      event.currentTarget.reset()
+      event.currentTarget?.reset()
     } finally {
       setSaving(false)
     }
@@ -74,32 +88,53 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendar</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Weekly view of appointments and availability blocks</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Calendar</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Weekly view of appointments and availability blocks</p>
+        </div>
+        <p className="font-mono text-xs uppercase tracking-[0.12em] tabular-nums text-muted-foreground">{rangeLabel(range.start, range.end)}</p>
       </div>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="space-y-4">
         <Card className="gap-0 py-0 shadow-none">
           <CardContent className="p-5">
-            <div className="mb-5 flex items-center gap-2">
-              <CalendarDays className="size-4 text-muted-foreground" />
-              <h2 className="font-semibold text-foreground">This Week</h2>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="size-4 text-muted-foreground" />
+                <h2 className="font-semibold text-foreground">This Week</h2>
+              </div>
+              <p className="font-mono text-xs uppercase tracking-[0.10em] tabular-nums text-muted-foreground">
+                {(appointments ?? []).length} appt · {(blocks ?? []).length} block
+              </p>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-7">
+            <div className="grid gap-4 md:grid-cols-7">
               {days.map((day) => {
                 const key = dayKey(day)
-                const dayAppointments = (appointments ?? []).filter((appointment) => itemDay(appointment.startsAt) === key)
-                const dayBlocks = (blocks ?? []).filter((block) => itemDay(block.startsAt) === key)
+                const isToday = key === todayKey
+                const isPast = key < todayKey
+                const dayAppointments = (appointments ?? []).filter((appointment) => itemDay(appointment.startsAt) === key).sort(byStart)
+                const dayBlocks = (blocks ?? []).filter((block) => itemDay(block.startsAt) === key).sort(byStart)
+                const count = dayAppointments.length + dayBlocks.length
 
                 return (
-                  <div key={key} className="min-h-72 rounded-lg border bg-secondary/30 p-3">
-                    <div className="mb-3">
-                      <p className="font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground">
-                        {day.toLocaleDateString("en-US", { weekday: "short" })}
-                      </p>
-                      <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">{day.getDate()}</p>
+                  <div
+                    key={key}
+                    className={[
+                      "min-h-40 rounded-lg border p-3 transition-colors",
+                      isToday ? "border-ring/50 bg-card ring-1 ring-ring/30" : "bg-secondary/30",
+                      isPast && !isToday ? "opacity-55" : "",
+                    ].join(" ")}
+                  >
+                    <div className="mb-3 flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground">
+                          {day.toLocaleDateString("en-US", { weekday: "short" })}
+                        </p>
+                        <p className={`mt-1 text-xl font-semibold tabular-nums ${isToday ? "text-ring" : "text-foreground"}`}>{day.getDate()}</p>
+                      </div>
+                      {count > 0 && <span className="mt-0.5 font-mono text-[11px] tabular-nums text-muted-foreground">{count}</span>}
                     </div>
 
                     <div className="space-y-2">
@@ -107,9 +142,18 @@ export default function CalendarPage() {
                         <CalendarAppointment key={appointment.id} appointment={appointment} />
                       ))}
                       {dayBlocks.map((block) => (
-                        <CalendarBlock key={block.id} block={block} onDelete={() => deleteAvailabilityBlock({ id: block.id as Id<"availabilityBlocks"> })} />
+                        <CalendarBlock
+                          key={block.id}
+                          block={block}
+                          onDelete={() => deleteAvailabilityBlock({ id: block.id as Id<"availabilityBlocks"> })}
+                        />
                       ))}
-                      {dayAppointments.length === 0 && dayBlocks.length === 0 && <p className="text-xs text-muted-foreground">Open</p>}
+                      {count === 0 &&
+                        (loading ? (
+                          <div className="h-10 animate-pulse rounded-md bg-secondary/60" />
+                        ) : (
+                          <p className="text-xs text-muted-foreground">Open</p>
+                        ))}
                     </div>
                   </div>
                 )
@@ -118,7 +162,7 @@ export default function CalendarPage() {
           </CardContent>
         </Card>
 
-        <Card className="gap-0 py-0 shadow-none">
+        <Card className="gap-0 py-0 shadow-none lg:max-w-md">
           <CardContent className="p-5">
             <div className="mb-5 flex items-center gap-2">
               <Plus className="size-4 text-muted-foreground" />
@@ -190,6 +234,10 @@ function CalendarBlock({ block, onDelete }: { block: AvailabilityBlock; onDelete
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-foreground">{block.title}</p>
           <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.10em] text-muted-foreground">{block.kind.replace("_", " ")}</p>
+          <p className="mt-2 flex items-center gap-1 font-mono text-[11px] text-muted-foreground">
+            <Clock className="size-3" />
+            {formatTime(block.startsAt)}
+          </p>
         </div>
         <Button type="button" variant="ghost" size="icon-sm" onClick={onDelete} aria-label="Delete availability block">
           <Ban className="size-3.5" />
