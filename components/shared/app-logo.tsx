@@ -21,7 +21,7 @@ export function AppLogo({ className, hideTitle, size = "md" }: { className?: str
   return (
     <div className={cn("flex items-center gap-1.5", className)}>
       <IconLeaf className={iconSize} />
-      {!hideTitle && <span className={`font-serif leading-none tracking-wide ${titleSize}`}>Skincare Dossier</span>}
+      {!hideTitle && <span className={`font-serif leading-none ${titleSize}`}>Skincare Dossier</span>}
     </div>
   )
 }
