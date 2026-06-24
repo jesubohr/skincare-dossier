@@ -104,7 +104,7 @@ export default function CalendarPage() {
                 <CalendarDays className="size-4 text-muted-foreground" />
                 <h2 className="font-semibold text-foreground">This Week</h2>
               </div>
-              <p className="font-mono text-xs uppercase tracking-[0.10em] tabular-nums text-muted-foreground">
+              <p className="font-mono text-xs uppercase tracking-widest tabular-nums text-muted-foreground">
                 {(appointments ?? []).length} appt · {(blocks ?? []).length} block
               </p>
             </div>
