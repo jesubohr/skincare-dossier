@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { type LucideIcon, Users, Calendar, Settings, LayoutDashboard, User, HelpCircle } from "lucide-react"
+import { type LucideIcon, Users, Calendar, Settings, LayoutDashboard, User, HelpCircle, Layers } from "lucide-react"
 
 import {
   Sidebar,
@@ -23,6 +23,7 @@ import { UserProfileButton } from "@/components/dashboard/user-profile-button"
 const mainNav = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Clients", href: "/dashboard/clients", icon: Users },
+  { label: "Treatments", href: "/dashboard/treatments", icon: Layers },
   { label: "Calendar", href: "/dashboard/calendar", icon: Calendar },
   { label: "Appointments", href: "/dashboard/appointments", icon: Calendar },
   { label: "Profile", href: "/dashboard/profile", icon: User },
