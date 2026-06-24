@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { Link, usePathname } from "@/i18n/navigation"
 import { type LucideIcon, Users, Calendar, Settings, LayoutDashboard, User, HelpCircle, Layers } from "lucide-react"
 
 import {
@@ -21,20 +21,22 @@ import { AppLogo } from "@/components/shared/app-logo"
 import { UserProfileButton } from "@/components/dashboard/user-profile-button"
 
 const mainNav = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Clients", href: "/dashboard/clients", icon: Users },
-  { label: "Treatments", href: "/dashboard/treatments", icon: Layers },
-  { label: "Calendar", href: "/dashboard/calendar", icon: Calendar },
-  { label: "Appointments", href: "/dashboard/appointments", icon: Calendar },
-  { label: "Profile", href: "/dashboard/profile", icon: User },
+  { labelKey: "dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { labelKey: "clients", href: "/dashboard/clients", icon: Users },
+  { labelKey: "treatments", href: "/dashboard/treatments", icon: Layers },
+  { labelKey: "calendar", href: "/dashboard/calendar", icon: Calendar },
+  { labelKey: "appointments", href: "/dashboard/appointments", icon: Calendar },
+  { labelKey: "profile", href: "/dashboard/profile", icon: User },
 ]
 
 const secondaryNav = [
-  { label: "Settings", href: "/dashboard/settings", icon: Settings },
-  { label: "Help", href: "/dashboard/help", icon: HelpCircle },
+  { labelKey: "settings", href: "/dashboard/settings", icon: Settings },
+  { labelKey: "help", href: "/dashboard/help", icon: HelpCircle },
 ]
 
 export function AppSidebar() {
+  const t = useTranslations("Navigation")
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -50,11 +52,11 @@ export function AppSidebar() {
       <SidebarContent className="overflow-hidden">
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("menu")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNav.map((item) => (
-                <NavigationItem key={item.href} icon={item.icon} label={item.label} href={item.href} />
+                <NavigationItem key={item.href} icon={item.icon} label={t(item.labelKey)} href={item.href} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -64,11 +66,11 @@ export function AppSidebar() {
 
         {/* Support navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Support</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("support")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {secondaryNav.map((item) => (
-                <NavigationItem key={item.href} icon={item.icon} label={item.label} href={item.href} />
+                <NavigationItem key={item.href} icon={item.icon} label={t(item.labelKey)} href={item.href} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

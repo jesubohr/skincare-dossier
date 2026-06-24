@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Plus } from "lucide-react"
 
 import type { Id } from "@/convex/_generated/dataModel"
@@ -33,13 +34,14 @@ const emptyForm = (treatment?: TreatmentRow) => ({
 })
 
 export function TreatmentSheet({ treatment, trigger }: TreatmentSheetProps) {
+  const t = useTranslations("Treatments")
+  const common = useTranslations("Common")
   const { createTreatment, updateTreatment } = useTreatments()
   const [open, setOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [form, setForm] = useState(emptyForm(treatment))
 
   const isEdit = Boolean(treatment)
-
   const update = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => setForm((prev) => ({ ...prev, [key]: value }))
 
   const handleOpenChange = (next: boolean) => {
@@ -76,70 +78,47 @@ export function TreatmentSheet({ treatment, trigger }: TreatmentSheetProps) {
         {trigger ?? (
           <Button>
             <Plus className="h-4 w-4" />
-            New treatment
+            {t("newTreatment")}
           </Button>
         )}
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>{isEdit ? "Edit treatment" : "New treatment"}</SheetTitle>
-          <SheetDescription>{isEdit ? "Update the details of this treatment." : "Add a treatment to your service menu."}</SheetDescription>
+          <SheetTitle>{isEdit ? t("editTreatment") : t("newTreatment")}</SheetTitle>
+          <SheetDescription>{isEdit ? t("editDescription") : t("newDescription")}</SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
           <div className="flex-1 space-y-4 overflow-y-auto px-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Classic Facial" required />
+              <Label htmlFor="name">{t("name")}</Label>
+              <Input id="name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder={t("namePlaceholder")} required />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                rows={3}
-                value={form.description}
-                onChange={(e) => update("description", e.target.value)}
-                placeholder="What the session includes and who it's for."
-              />
+              <Label htmlFor="description">{t("description")}</Label>
+              <Textarea id="description" rows={3} value={form.description} onChange={(e) => update("description", e.target.value)} placeholder={t("descriptionPlaceholder")} />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="duration">Duration (min)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  min={1}
-                  step={5}
-                  value={form.duration}
-                  onChange={(e) => update("duration", e.target.value)}
-                  placeholder="60"
-                  required
-                />
+                <Label htmlFor="duration">{t("duration")}</Label>
+                <Input id="duration" type="number" min={1} step={5} value={form.duration} onChange={(e) => update("duration", e.target.value)} placeholder="60" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">Price ($)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  value={form.price}
-                  onChange={(e) => update("price", e.target.value)}
-                  placeholder="150.00"
-                />
+                <Label htmlFor="price">{t("price")}</Label>
+                <Input id="price" type="number" min={0} step="0.01" value={form.price} onChange={(e) => update("price", e.target.value)} placeholder="150.00" />
               </div>
             </div>
           </div>
 
           <SheetFooter>
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Saving..." : isEdit ? "Save changes" : "Create treatment"}
+              {submitting ? common("saving") : isEdit ? t("saveChanges") : t("create")}
             </Button>
             <SheetClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {common("cancel")}
               </Button>
             </SheetClose>
           </SheetFooter>

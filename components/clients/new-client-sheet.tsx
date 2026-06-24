@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useMutation } from "convex/react"
+import { useTranslations } from "next-intl"
 import { Plus } from "lucide-react"
 
 import { api } from "@/convex/_generated/api"
@@ -14,13 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 const SKIN_TYPES = ["Normal", "Dry", "Oily", "Combination", "Sensitive", "Aging", "Acne"] as const
-
-const STATUS_OPTIONS: { value: ClientStatus; label: string }[] = [
-  { value: "active", label: "Active" },
-  { value: "needs-follow-up", label: "Needs follow-up" },
-  { value: "payment-overdue", label: "Payment overdue" },
-  { value: "none", label: "None" },
-]
+const STATUS_OPTIONS: ClientStatus[] = ["active", "needs-follow-up", "payment-overdue", "none"]
 
 const EMPTY_FORM = {
   fullName: "",
@@ -31,7 +26,17 @@ const EMPTY_FORM = {
   status: "active" as ClientStatus,
 }
 
+function statusKey(status: ClientStatus) {
+  if (status === "needs-follow-up") return "needsFollowUp"
+  if (status === "payment-overdue") return "paymentOverdue"
+  return status
+}
+
 export function NewClientSheet() {
+  const t = useTranslations("Clients")
+  const common = useTranslations("Common")
+  const statusText = useTranslations("Common.status")
+  const skinTypes = useTranslations("Common.skinTypes")
   const createClient = useMutation(api.clients.createClient)
   const [open, setOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -63,54 +68,47 @@ export function NewClientSheet() {
       <SheetTrigger asChild>
         <Button>
           <Plus className="h-4 w-4" />
-          New client
+          {t("newClient")}
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>New client</SheetTitle>
-          <SheetDescription>Add a new client record to your practice.</SheetDescription>
+          <SheetTitle>{t("newClient")}</SheetTitle>
+          <SheetDescription>{t("newDescription")}</SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
           <div className="flex-1 space-y-4 overflow-y-auto px-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full name</Label>
+              <Label htmlFor="fullName">{t("fullName")}</Label>
               <Input id="fullName" value={form.fullName} onChange={(e) => update("fullName", e.target.value)} placeholder="Jane Doe" required />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{common("email")}</Label>
               <Input id="email" type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="jane@example.com" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={form.phone}
-                onChange={(e) => update("phone", e.target.value)}
-                placeholder="+1 555 123 4567"
-                required
-              />
+              <Label htmlFor="phone">{t("phone")}</Label>
+              <Input id="phone" type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+1 555 123 4567" required />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="birthDate">Birth date</Label>
+              <Label htmlFor="birthDate">{t("birthDate")}</Label>
               <Input id="birthDate" type="date" value={form.birthDate} onChange={(e) => update("birthDate", e.target.value)} required />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="skinType">Skin type</Label>
+              <Label htmlFor="skinType">{t("skinType")}</Label>
               <Select value={form.skinType} onValueChange={(value) => update("skinType", value)}>
                 <SelectTrigger id="skinType" className="w-full">
-                  <SelectValue placeholder="Select skin type" />
+                  <SelectValue placeholder={t("selectSkinType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {SKIN_TYPES.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type}
+                      {skinTypes(type)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -118,15 +116,15 @@ export function NewClientSheet() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t("status")}</Label>
               <Select value={form.status} onValueChange={(value) => update("status", value as ClientStatus)}>
                 <SelectTrigger id="status" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {STATUS_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                    <SelectItem key={option} value={option}>
+                      {statusText(statusKey(option))}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -136,11 +134,11 @@ export function NewClientSheet() {
 
           <SheetFooter>
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Saving..." : "Create client"}
+              {submitting ? common("saving") : t("create")}
             </Button>
             <SheetClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {common("cancel")}
               </Button>
             </SheetClose>
           </SheetFooter>

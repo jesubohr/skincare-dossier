@@ -1,11 +1,12 @@
 "use client"
 
-import Link from "next/link"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Search, ChevronLeft, ChevronRight, MessageCircle, Eye, ChevronsLeft, ChevronsRight } from "lucide-react"
 
-import type { Client } from "@/lib/types"
-import { cn, getStatusText, getStatusColor } from "@/lib/utils"
+import type { Client, ClientStatus } from "@/lib/types"
+import { Link } from "@/i18n/navigation"
+import { cn, getStatusColor } from "@/lib/utils"
 
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -18,12 +19,21 @@ interface ClientsTableProps {
   clients: Client[]
 }
 
+function statusKey(status: ClientStatus) {
+  if (status === "needs-follow-up") return "needsFollowUp"
+  if (status === "payment-overdue") return "paymentOverdue"
+  return status
+}
+
 export function ClientsTable({ clients }: ClientsTableProps) {
+  const t = useTranslations("Clients")
+  const statusText = useTranslations("Common.status")
+  const skinTypes = useTranslations("Common.skinTypes")
+  const common = useTranslations("Common")
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  // Filter clients based on search query
   const filteredClients = clients.filter((client) => {
     const query = searchQuery.toLowerCase()
     return (
@@ -35,26 +45,22 @@ export function ClientsTable({ clients }: ClientsTableProps) {
     )
   })
 
-  // Calculate pagination
   const totalItems = filteredClients.length
   const totalPages = Math.ceil(totalItems / pageSize)
   const startIndex = (currentPage - 1) * pageSize
   const endIndex = Math.min(startIndex + pageSize, totalItems)
   const paginatedClients = filteredClients.slice(startIndex, endIndex)
 
-  // Reset to first page when search changes
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
     setCurrentPage(1)
   }
 
-  // Handle page size change
   const handlePageSizeChange = (value: string) => {
     setPageSize(Number(value))
     setCurrentPage(1)
   }
 
-  // Status badge variant
   const getStatusVariant = (status: string) => {
     switch (status) {
       case "active":
@@ -70,41 +76,32 @@ export function ClientsTable({ clients }: ClientsTableProps) {
 
   return (
     <div className="space-y-4">
-      {/* Search and Filters */}
       <div className="flex items-center justify-between">
         <div className="relative max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search clients..."
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9 w-75"
-          />
+          <Input placeholder={t("search")} value={searchQuery} onChange={(e) => handleSearchChange(e.target.value)} className="pl-9 w-75" />
         </div>
-        <div className="text-sm text-muted-foreground">
-          {totalItems} client{totalItems !== 1 ? "s" : ""} found
-        </div>
+        <div className="text-sm text-muted-foreground">{t("found", { count: totalItems })}</div>
       </div>
 
-      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[250px]">Client</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Skin Type</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Last Treatment</TableHead>
-              <TableHead className="w-[120px]">Actions</TableHead>
+              <TableHead className="w-[250px]">{t("client")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead>{t("skinType")}</TableHead>
+              <TableHead>{t("phone")}</TableHead>
+              <TableHead>{common("email")}</TableHead>
+              <TableHead>{t("lastTreatment")}</TableHead>
+              <TableHead className="w-[120px]">{common("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedClients.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
-                  No clients found
+                  {t("noClients")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -121,12 +118,12 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                   <TableCell>
                     <Badge variant={getStatusVariant(client.status)} className="gap-1.5">
                       <span className={cn("h-2 w-2 rounded-full", getStatusColor(client.status))} />
-                      {getStatusText(client.status)}
+                      {statusText(statusKey(client.status))}
                     </Badge>
                   </TableCell>
-                  <TableCell>{client.skinType || "—"}</TableCell>
+                  <TableCell>{client.skinType ? skinTypes(client.skinType) : common("dash")}</TableCell>
                   <TableCell className="font-mono text-sm">{client.phone}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{client.email || "—"}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">{client.email || common("dash")}</TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">{client.lastTreatment?.date}</div>
@@ -154,10 +151,9 @@ export function ClientsTable({ clients }: ClientsTableProps) {
         </Table>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Rows per page</span>
+          <span className="text-sm text-muted-foreground">{t("rowsPerPage")}</span>
           <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue />
@@ -169,9 +165,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
               <SelectItem value="50">50</SelectItem>
             </SelectContent>
           </Select>
-          <span className="text-sm text-muted-foreground">
-            Showing {totalItems === 0 ? 0 : startIndex + 1} - {endIndex} of {totalItems}
-          </span>
+          <span className="text-sm text-muted-foreground">{t("showing", { start: totalItems === 0 ? 0 : startIndex + 1, end: endIndex, total: totalItems })}</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -181,9 +175,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
           <Button variant="outline" size="icon-sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm text-muted-foreground min-w-[100px] text-center">
-            Page {currentPage} of {totalPages || 1}
-          </span>
+          <span className="text-sm text-muted-foreground min-w-[100px] text-center">{t("page", { current: currentPage, total: totalPages || 1 })}</span>
           <Button
             variant="outline"
             size="icon-sm"

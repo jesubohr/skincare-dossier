@@ -1,6 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
+import { useTranslations } from "next-intl"
 import { Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -11,6 +12,7 @@ type ViewTransitionDocument = Document & {
 }
 
 export function ThemeToggle() {
+  const t = useTranslations("Navigation")
   const { resolvedTheme, setTheme } = useTheme()
 
   function toggleTheme() {
@@ -31,7 +33,7 @@ export function ThemeToggle() {
   return (
     <Button size="icon" variant="ghost" onClick={toggleTheme} className="group h-9 w-9 hover:bg-primary/10 dark:hover:bg-primary/30">
       {resolvedTheme === "dark" ? <Moon className={iconStyles} suppressHydrationWarning /> : <Sun className={iconStyles} suppressHydrationWarning />}
-      <span className="sr-only">Toggle theme</span>
+      <span className="sr-only">{t("toggleTheme")}</span>
     </Button>
   )
 }

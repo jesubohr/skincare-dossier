@@ -1,6 +1,7 @@
 "use client"
 
 import { ChevronsUpDown, LogOut } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useUserStore } from "@/lib/store/user-store"
 import { getAvatarInitials } from "@/lib/utils"
 
@@ -10,15 +11,16 @@ import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export function UserProfileButton() {
+  const t = useTranslations("Navigation")
   const { isMobile } = useSidebar()
   const profile = useUserStore((state) => state.profile)
   const displayName = profile?.displayName ?? profile?.fullName
-  const initials = getAvatarInitials(displayName || "User")
+  const initials = getAvatarInitials(displayName || t("profile"))
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 w-full" asChild>
-        <SidebarMenuButton size="lg" tooltip={displayName ?? "Profile"}>
+        <SidebarMenuButton size="lg" tooltip={displayName ?? t("profile")}>
           <div className="grow flex items-center gap-2">
             <UserAvatar variant="small" initials={initials} avatarUrl={profile?.avatarUrl} />
             <div className="flex flex-col items-start min-w-0">
@@ -46,11 +48,11 @@ export function UserProfileButton() {
             <span className="ml-0.5 text-xs text-muted-foreground">{profile?.email}</span>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuItem>Account</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" aria-label="Sign out">
+        <DropdownMenuItem>{t("account")}</DropdownMenuItem>
+        <DropdownMenuItem>{t("billing")}</DropdownMenuItem>
+        <DropdownMenuItem variant="destructive" aria-label={t("signOut")}>
           <LogOut />
-          Sign out
+          {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
