@@ -78,7 +78,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
             placeholder="Search clients..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9 w-[300px]"
+            className="pl-9 w-75"
           />
         </div>
         <div className="text-sm text-muted-foreground">
@@ -115,7 +115,6 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                       <ClientAvatar name={client.fullName} status={client.status} size="sm" />
                       <div>
                         <div className="font-medium">{client.fullName}</div>
-                        <div className="text-sm text-muted-foreground">{client.id}</div>
                       </div>
                     </div>
                   </TableCell>
