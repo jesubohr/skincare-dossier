@@ -15,6 +15,19 @@ const appointmentStatus = v.union(
 
 const blockKind = v.union(v.literal("time_off"), v.literal("admin"), v.literal("other"))
 
+function assertValidTimeRange(startsAt: string, endsAt: string) {
+  const start = new Date(startsAt).getTime()
+  const end = new Date(endsAt).getTime()
+
+  if (!Number.isFinite(start) || !Number.isFinite(end)) {
+    throw new Error("Appointment times must be valid dates")
+  }
+
+  if (end <= start) {
+    throw new Error("Appointment end time must be after start time")
+  }
+}
+
 async function enrichAppointment(ctx: QueryCtx, appointment: Doc<"appointments">) {
   const client = appointment.clientId ? await ctx.db.get(appointment.clientId) : null
   const treatment = appointment.treatmentId ? await ctx.db.get(appointment.treatmentId) : null
@@ -65,6 +78,7 @@ export const createAppointment = mutation({
     const client = args.clientId ? await ctx.db.get(args.clientId) : null
     const treatment = args.treatmentId ? await ctx.db.get(args.treatmentId) : null
 
+    assertValidTimeRange(args.startsAt, args.endsAt)
     if (client && client.userId !== user._id) throw new Error("Client not found")
     if (treatment && treatment.userId !== user._id) throw new Error("Treatment not found")
 
@@ -104,6 +118,7 @@ export const updateAppointment = mutation({
 
     const client = args.clientId ? await ctx.db.get(args.clientId) : null
     const treatment = args.treatmentId ? await ctx.db.get(args.treatmentId) : null
+    assertValidTimeRange(args.startsAt, args.endsAt)
     if (client && client.userId !== user._id) throw new Error("Client not found")
     if (treatment && treatment.userId !== user._id) throw new Error("Treatment not found")
 

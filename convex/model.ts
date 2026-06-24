@@ -78,9 +78,48 @@ export function minutesBetween(startsAt: string, endsAt: string) {
   return Math.round((end - start) / 60000)
 }
 
-export function sameDayRange(day: string) {
+function getTimeZoneOffsetMs(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(date)
+
+  const values = Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, Number(part.value)]))
+  const zonedAsUtc = Date.UTC(values.year, values.month - 1, values.day, values.hour, values.minute, values.second)
+  return zonedAsUtc - date.getTime()
+}
+
+function zonedDateTimeToUtc(year: number, month: number, day: number, timeZone: string) {
+  const localAsUtc = Date.UTC(year, month - 1, day, 0, 0, 0, 0)
+  const firstPass = localAsUtc - getTimeZoneOffsetMs(new Date(localAsUtc), timeZone)
+  const secondPass = localAsUtc - getTimeZoneOffsetMs(new Date(firstPass), timeZone)
+  return new Date(secondPass)
+}
+
+export function sameDayRange(day: string, timeZone = DEFAULT_SETTINGS.timezone) {
+  const [year, month, date] = day.split("-").map(Number)
+
+  if (!year || !month || !date) {
+    return {
+      start: `${day}T00:00:00.000Z`,
+      end: `${day}T23:59:59.999Z`,
+    }
+  }
+
+  const nextDay = new Date(Date.UTC(year, month - 1, date + 1))
+  const start = zonedDateTimeToUtc(year, month, date, timeZone)
+  const end = new Date(
+    zonedDateTimeToUtc(nextDay.getUTCFullYear(), nextDay.getUTCMonth() + 1, nextDay.getUTCDate(), timeZone).getTime() - 1,
+  )
+
   return {
-    start: `${day}T00:00:00.000Z`,
-    end: `${day}T23:59:59.999Z`,
+    start: start.toISOString(),
+    end: end.toISOString(),
   }
 }

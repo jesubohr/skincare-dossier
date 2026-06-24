@@ -32,8 +32,8 @@ export const getSummary = query({
   },
   handler: async (ctx, args) => {
     const user = await requireCurrentUser(ctx)
-    const range = sameDayRange(args.day)
     const settings = await getPracticeSettings(ctx, user._id)
+    const range = sameDayRange(args.day, settings?.timezone)
 
     const [appointments, clients] = await Promise.all([
       ctx.db
